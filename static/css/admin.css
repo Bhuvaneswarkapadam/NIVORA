@@ -1,0 +1,151 @@
+/* ===================================================================
+   NIVORA – Luxury Admin Dashboard Styling
+   =================================================================== */
+
+.admin-header-bar {
+  background: #0C0C0C;
+  border-bottom: 1px solid var(--card-dark-border);
+  padding: 1rem 0;
+  color: #FFFFFF;
+}
+
+.admin-badge {
+  background: var(--gold-primary);
+  color: #0A0A0A;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.admin-stat-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gold-gradient);
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.admin-stat-number {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--primary-black);
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+
+.admin-stat-label {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: #F5E6B3;
+  color: #8C6D14;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+}
+
+.admin-table-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.admin-table-card .table {
+  margin-bottom: 0;
+  vertical-align: middle;
+}
+
+.admin-table-card thead th {
+  background: #141414;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 1rem 1.25rem;
+  border: none;
+}
+
+.admin-table-card tbody td {
+  padding: 1rem 1.25rem;
+  font-size: 0.92rem;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.admin-table-card tbody tr:hover {
+  background-color: #FDFCF7;
+}
+
+.admin-action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.88rem;
+  border: 1px solid transparent;
+  transition: var(--transition);
+}
+
+.admin-action-edit {
+  background: #E8F4FD;
+  color: #0D6EFD;
+}
+.admin-action-edit:hover {
+  background: #0D6EFD;
+  color: #FFFFFF;
+}
+
+.admin-action-delete {
+  background: #FDE8E8;
+  color: #DC3545;
+}
+.admin-action-delete:hover {
+  background: #DC3545;
+  color: #FFFFFF;
+}
+
+.admin-action-view {
+  background: #F4F0E4;
+  color: var(--gold-dark);
+}
+.admin-action-view:hover {
+  background: var(--gold-primary);
+  color: #0A0A0A;
+}
+

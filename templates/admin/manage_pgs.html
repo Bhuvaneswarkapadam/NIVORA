@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Manage PG Accommodations | NIVORA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header-bar">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+      <h5 class="mb-0 fw-bold text-white"><i class="fa-solid fa-list-check text-gold me-2"></i>Manage PG Accommodations</h5>
+      <div class="small text-muted">View, edit, verify, or remove accommodations across Bangalore.</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
+      <a href="{{ url_for('add_pg') }}" class="btn btn-gold btn-sm"><i class="fa-solid fa-plus-circle me-1"></i> Add New PG</a>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Search & Area Filter Bar -->
+  <div class="p-3 bg-white border rounded shadow-sm mb-4">
+    <form method="GET" action="{{ url_for('manage_pgs') }}" class="row g-2 align-items-center">
+      <div class="col-md-5">
+        <input type="text" name="q" class="form-control form-control-sm" placeholder="Search by PG name or address..." value="{{ search_query }}">
+      </div>
+      <div class="col-md-4">
+        <select name="area" class="form-select form-select-sm">
+          <option value="">All Bangalore Areas</option>
+          {% for area in bangalore_areas %}
+            <option value="{{ area }}" {{ 'selected' if area_filter == area }}>{{ area }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3 d-flex gap-2">
+        <button type="submit" class="btn btn-gold btn-sm w-100"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+        <a href="{{ url_for('manage_pgs') }}" class="btn btn-outline-secondary btn-sm"><i class="fa-solid fa-rotate-left"></i></a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Listings Table -->
+  <div class="admin-table-card">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Property & Address</th>
+            <th>Area</th>
+            <th>Rent / Mo</th>
+            <th>Category & Sharing</th>
+            <th>Verified</th>
+            <th>Owner Details</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pg in pgs %}
+            <tr>
+              <td class="font-monospace text-muted small">#{{ pg.id }}</td>
+              <td>
+                <div class="fw-bold">{{ pg.name }}</div>
+                <div class="small text-muted text-truncate" style="max-width: 200px;">{{ pg.address }}</div>
+                {% if pg.is_sample %}
+                  <span class="badge bg-secondary" style="font-size: 10px;">Sample</span>
+                {% endif %}
+              </td>
+              <td><span class="badge bg-light text-dark border">{{ pg.area }}</span></td>
+              <td class="font-monospace fw-bold">{{ pg.monthly_rent | currency_inr }}</td>
+              <td>
+                <div class="small fw-semibold">{{ pg.gender_category }}</div>
+                <div class="small text-muted">{{ pg.room_type }}</div>
+              </td>
+              <td>
+                <form action="{{ url_for('toggle_verified_pg', pg_id=pg.id) }}" method="POST">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  {% if pg.verified %}
+                    <button type="submit" class="btn btn-success btn-sm py-0 px-2" style="font-size: 11px;" title="Click to unverify">
+                      <i class="fa-solid fa-check"></i> Verified
+                    </button>
+                  {% else %}
+                    <button type="submit" class="btn btn-outline-secondary btn-sm py-0 px-2" style="font-size: 11px;" title="Click to verify">
+                      Unverified
+                    </button>
+                  {% endif %}
+                </form>
+              </td>
+              <td>
+                <div class="small fw-bold">{{ pg.owner_name }}</div>
+                <div class="small text-muted font-monospace">{{ pg.owner_phone }}</div>
+              </td>
+              <td>
+                <div class="d-flex gap-1">
+                  <a href="{{ url_for('edit_pg', pg_id=pg.id) }}" class="admin-action-btn admin-action-edit" title="Edit Listing">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <a href="{{ url_for('pg_details', pg_id=pg.id) }}" class="admin-action-btn admin-action-view" target="_blank" title="View Public Page">
+                    <i class="fa-solid fa-eye"></i>
+                  </a>
+                  <form action="{{ url_for('delete_pg', pg_id=pg.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to permanently delete this accommodation?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="admin-action-btn admin-action-delete" title="Delete Listing">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="8" class="text-center py-5 text-muted">
+                <i class="fa-solid fa-building-circle-exclamation display-6 mb-2"></i>
+                <div>No accommodations match the query.</div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

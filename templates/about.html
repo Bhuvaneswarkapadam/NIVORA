@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}About Us | NIVORA – Find Your Place. Feel at Home.{% endblock %}
+
+{% block content %}
+<!-- About Hero -->
+<section class="py-5" style="background: #0E0E0E; color: #FFFFFF; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+  <div class="container py-4 text-center">
+    <span class="badge bg-dark text-gold border border-gold mb-3">OUR MISSION</span>
+    <h1 class="fw-bold display-5 mb-3">Redefining How Bangalore Discovers Living Spaces</h1>
+    <p class="text-muted max-w-700 mx-auto fs-5 mb-0">
+      NIVORA was built to remove the chaos, hidden fees, and misinformation from finding PG accommodations.
+    </p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row align-items-center g-5 mb-5">
+    <div class="col-lg-6">
+      <span class="badge bg-dark text-gold border border-gold mb-2">THE PROBLEM</span>
+      <h2 class="fw-bold mb-3">The Relocation Dilemma in Silicon Plateau</h2>
+      <p class="text-secondary" style="line-height: 1.8;">
+        Every year, over 400,000 students and young professionals relocate to Bangalore to join tech giants, launch startups, or study at premier universities. What should be an exhilarating milestone quickly degenerates into exhaustion: misleading photos, broker commissions, unexpected lock-ins, and properties situated kilometers away from advertised locations.
+      </p>
+      <p class="text-secondary" style="line-height: 1.8;">
+        NIVORA changes the paradigm. We provide a luxury-grade, transparent discovery platform where every accommodation's exact coordinates, real amenities, authentic rent, and direct host contacts are verified upfront.
+      </p>
+    </div>
+    <div class="col-lg-6">
+      <div class="p-4 bg-dark text-white rounded border border-secondary shadow-lg">
+        <h4 class="fw-bold text-gold mb-3"><i class="fa-solid fa-award me-2"></i>The 4 Pillars of NIVORA</h4>
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="btn-gold rounded-circle p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-check"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Authentic Geolocation & Maps</h6>
+            <div class="small text-muted">Never guess travel times. We compute exact Haversine commute distances from your office.</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="btn-gold rounded-circle p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-ban"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Zero Middleman Brokerage</h6>
+            <div class="small text-muted">Direct phone calls, WhatsApp inquiries, and in-person tours directly with verified property hosts.</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="btn-gold rounded-circle p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-shield-check"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Rigorous Quality Benchmarks</h6>
+            <div class="small text-muted">We prioritize security, high-speed fiber internet, cleanliness, and nutritious culinary standards.</div>
+          </div>
+        </div>
+        <div class="d-flex align-items-start gap-3">
+          <div class="btn-gold rounded-circle p-2" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-compass"></i></div>
+          <div>
+            <h6 class="fw-bold mb-1">Intuitive User-First Design</h6>
+            <div class="small text-muted">A modern, responsive web application engineered for speed, simplicity, and elegance.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tech Corridors Covered -->
+  <div class="p-5 bg-white border rounded shadow-sm text-center">
+    <h3 class="fw-bold mb-2">Serving 15 Key Bangalore Hubs</h3>
+    <p class="text-muted mb-4 max-w-600 mx-auto">
+      From Koramangala's startup lanes to Whitefield's ITPL parks, Indiranagar's cafes to Electronic City's campuses, NIVORA is your local companion.
+    </p>
+    <a href="{{ url_for('locations') }}" class="btn btn-gold">
+      <i class="fa-solid fa-map-location-dot me-1"></i> Explore Bangalore Neighborhoods
+    </a>
+  </div>
+</div>
+{% endblock %}
+

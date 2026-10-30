@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#090909"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#D4AF37"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="500" fill="url(#bgGrad)"/>
+  <rect width="800" height="500" fill="url(#grid)"/>
+
+  <!-- Interior Architectural Illustration Artwork -->
+  <g transform="translate(100, 70)" opacity="0.9">
+    <!-- Room perspective walls -->
+    <polygon points="0,0 600,0 500,70 100,70" fill="rgba(255,255,255,0.02)"/>
+    <polygon points="100,70 500,70 500,280 100,280" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"/>
+    
+    <!-- Big Window with Bangalore City Silhouette -->
+    <rect x="340" y="90" width="140" height="130" rx="4" fill="#0C1017" stroke="rgba(255,255,255,0.15)"/>
+    <line x1="410" y1="90" x2="410" y2="220" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+    <line x1="340" y1="155" x2="480" y2="155" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+    <!-- City silhouette lights -->
+    <rect x="360" y="160" width="18" height="55" fill="#1C2536"/>
+    <rect x="390" y="140" width="22" height="75" fill="#222E42"/>
+    <rect x="425" y="150" width="25" height="65" fill="#18202D"/>
+    <circle cx="450" cy="115" r="8" fill="#FFF275" opacity="0.7"/>
+
+    <!-- Modern Platform Bed with Luxury Gold Linens -->
+    <polygon points="130,220 290,220 310,270 110,270" fill="#202025" stroke="#D4AF37" stroke-width="1.5"/>
+    <rect x="140" y="200" width="140" height="22" rx="4" fill="url(#accentGrad)"/>
+    <!-- Pillows -->
+    <rect x="150" y="185" width="50" height="15" rx="3" fill="#EDEDED"/>
+    <rect x="215" y="185" width="50" height="15" rx="3" fill="#EDEDED"/>
+
+    <!-- Workstation Desk & Lamp -->
+    <rect x="330" y="225" width="150" height="8" rx="2" fill="#D4AF37"/>
+    <rect x="345" y="233" width="6" height="37" fill="#444"/>
+    <rect x="460" y="233" width="6" height="37" fill="#444"/>
+    <!-- Laptop -->
+    <polygon points="380,210 420,210 426,225 374,225" fill="#888"/>
+    <rect x="382" y="196" width="36" height="15" rx="2" fill="#EAEAEA" stroke="#333"/>
+
+    <!-- Ambient Pendant Lamp Hanging -->
+    <line x1="220" y1="70" x2="220" y2="130" stroke="#D4AF37" stroke-width="1.5"/>
+    <polygon points="205,145 235,145 228,130 212,130" fill="url(#accentGrad)"/>
+    <circle cx="220" cy="148" r="4" fill="#FFEAA7"/>
+  </g>
+
+  <!-- Dark gradient scrim at bottom for text contrast -->
+  <rect x="0" y="320" width="800" height="180" fill="url(#bottomScrim)"/>
+  <defs>
+    <linearGradient id="bottomScrim" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="60%" stop-color="#080808" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#080808"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Tag Pill -->
+  <g transform="translate(40, 360)">
+    <rect width="130" height="26" rx="13" fill="rgba(212, 175, 55, 0.2)" stroke="#D4AF37" stroke-width="1"/>
+    <text x="65" y="17" font-family="'Inter', sans-serif" font-size="11" font-weight="700" fill="#D4AF37" text-anchor="middle">
+      Verified PG
+    </text>
+  </g>
+
+  <!-- Title & Meta -->
+  <text x="40" y="420" font-family="'Poppins', sans-serif" font-size="28" font-weight="700" fill="#FFFFFF">
+    NIVORA Accommodation
+  </text>
+  <text x="40" y="450" font-family="'Inter', sans-serif" font-size="14" font-weight="500" fill="#B0B0B0">
+    📍 Bangalore  •  Comfort & Convenience in Bangalore
+  </text>
+
+  <!-- Watermark -->
+  <text x="760" y="470" font-family="'Poppins', sans-serif" font-size="12" font-weight="700" fill="rgba(212, 175, 55, 0.5)" letter-spacing="2" text-anchor="end">
+    NIVORA VERIFIED
+  </text>
+</svg>

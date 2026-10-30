@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Internal Server Error | NIVORA{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center my-5">
+  <div class="display-1 fw-bold text-danger font-monospace">500</div>
+  <h2 class="fw-bold mb-3">Something Went Wrong</h2>
+  <p class="text-muted max-w-500 mx-auto mb-4">
+    Our systems encountered an unexpected error while processing your request. Our team has been notified.
+  </p>
+  <a href="{{ url_for('index') }}" class="btn btn-gold">Back to Homepage</a>
+</div>
+{% endblock %}
+

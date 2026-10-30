@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+
+{% block title %}NIVORA – Find Your Perfect PG in Bangalore | Find Your Place. Feel at Home.{% endblock %}
+
+{% block content %}
+<!-- =======================================================
+     HERO SECTION
+     ======================================================= -->
+<section class="hero-section">
+  <div class="container position-relative">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="hero-pill">
+          <i class="fa-solid fa-sparkles text-gold"></i>
+          <span>FIND YOUR PLACE. FEEL AT HOME.</span>
+        </div>
+        <h1 class="hero-title">
+          Find Your Perfect <br>
+          <span class="text-gold-gradient">PG Nearby</span>
+        </h1>
+        <p class="hero-subtitle">
+          Discover comfortable, affordable and convenient PG accommodations around your preferred Bangalore location.
+          Servicing tech hubs, universities and residential corridors.
+        </p>
+
+        <!-- Fast Stats Counters -->
+        <div class="d-flex align-items-center gap-4 pt-2 pb-4 text-white">
+          <div>
+            <div class="fs-3 fw-bold font-monospace text-gold">{{ total_pgs }}+</div>
+            <div class="small text-muted">Accommodations</div>
+          </div>
+          <div class="border-start border-secondary ps-4">
+            <div class="fs-3 fw-bold font-monospace text-white">{{ total_areas }}</div>
+            <div class="small text-muted">Bangalore Hubs</div>
+          </div>
+          <div class="border-start border-secondary ps-4">
+            <div class="fs-3 fw-bold font-monospace text-gold">100%</div>
+            <div class="small text-muted">Direct Contacts</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <!-- Hero Search Form Card -->
+        <div class="hero-search-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="text-white mb-0 fw-bold"><i
+                class="fa-solid fa-magnifying-glass-location text-gold me-2"></i>Discover Stays</h5>
+            <span class="badge bg-dark text-gold border border-gold small">Instant Search</span>
+          </div>
+
+          <form action="{{ url_for('search') }}" method="GET" id="heroSearchForm">
+            <!-- Location Select -->
+            <div class="mb-3">
+              <label class="search-field-label">
+                <i class="fa-solid fa-map-pin"></i> Preferred Bangalore Area
+              </label>
+              <select name="area" class="search-input-custom" id="heroAreaSelect">
+                <option value="">All Bangalore Neighborhoods</option>
+                {% for area in bangalore_areas %}
+                <option value="{{ area }}">{{ area }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Budget & Room Type in 2 cols -->
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="search-field-label">
+                  <i class="fa-solid fa-indian-rupee-sign"></i> Max Budget
+                </label>
+                <select name="max_rent" class="search-input-custom">
+                  <option value="">Any Budget</option>
+                  <option value="10000">Under ₹10,000</option>
+                  <option value="15000">Under ₹15,000</option>
+                  <option value="20000">Under ₹20,000</option>
+                  <option value="30000">Under ₹30,000</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="search-field-label">
+                  <i class="fa-solid fa-users"></i> Gender Type
+                </label>
+                <select name="gender" class="search-input-custom">
+                  <option value="all">Any Gender</option>
+                  <option value="Boys">Boys PG</option>
+                  <option value="Girls">Girls PG</option>
+                  <option value="Co-living">Co-living</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Room Sharing Type -->
+            <div class="mb-4">
+              <label class="search-field-label">
+                <i class="fa-solid fa-bed"></i> Room Sharing
+              </label>
+              <select name="room_type" class="search-input-custom">
+                <option value="all">Any Sharing Type</option>
+                <option value="Single Sharing">Single Sharing (Private)</option>
+                <option value="Double Sharing">Double Sharing (2 Beds)</option>
+                <option value="Triple Sharing">Triple Sharing (3 Beds)</option>
+              </select>
+            </div>
+
+            <!-- Submit & Find My Location -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-gold py-2">
+                <i class="fa-solid fa-compass"></i> Search Accommodations
+              </button>
+
+              <button type="button" class="btn btn-dark-luxury btn-detect-location py-2">
+                <i class="fa-solid fa-location-crosshairs text-gold"></i> Find PGs Near My Location
+              </button>
+            </div>
+
+            <div class="geo-status-banner mt-3" id="geoStatusText">
+              <span><i class="fa-solid fa-shield-halved me-1"></i> Exact distance calculated via GPS</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================
+     POPULAR BANGALORE LOCATIONS
+     ======================================================= -->
+<section class="py-5" style="background: #F8F7F3;">
+  <div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+      <div>
+        <span class="badge bg-dark text-gold border border-gold mb-2">EXPLORE NEIGHBORHOODS</span>
+        <h2 class="fw-bold mb-1">Popular Bangalore Hubs</h2>
+        <p class="text-muted mb-0">Discover verified accommodations near your office, college campus or transit line.
+        </p>
+      </div>
+      <a href="{{ url_for('locations') }}"
+        class="btn btn-outline-dark mt-3 mt-md-0 d-inline-flex align-items-center gap-2">
+        <span>View All 15 Areas</span> <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for loc in popular_locations %}
+      <div class="col-lg-3 col-md-4 col-sm-6">
+        <a href="{{ url_for('search', area=loc.name) }}" class="location-card"
+          style="background-image: url('{{ url_for('static', filename='images/pg/pg' ~ ((loop.index % 12) + 1) ~ '_main.svg') }}');">
+          <div class="location-card-content">
+            <span class="location-card-badge">{{ loc.badge }}</span>
+            <div class="location-card-title">{{ loc.name }}</div>
+            <div class="location-card-meta">
+              <span>{{ loc.tagline }}</span>
+              <span class="badge bg-gold text-dark font-monospace fw-bold">{{ loc.count }} PGs</span>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================
+     FEATURED PG ACCOMMODATIONS
+     ======================================================= -->
+<section class="py-5" style="background: #FFFFFF; border-top: 1px solid #EAEAEA;">
+  <div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+      <div>
+        <span class="badge bg-dark text-gold border border-gold mb-2">CURATED EXCLUSIVES</span>
+        <h2 class="fw-bold mb-1">Featured Stays in Bangalore</h2>
+        <p class="text-muted mb-0">Handpicked, verified listings offering premium amenities, security, and prime
+          accessibility.</p>
+      </div>
+      <a href="{{ url_for('search') }}" class="btn btn-gold mt-3 mt-md-0">
+        <i class="fa-solid fa-grid-2"></i> Browse All Listings
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for pg in featured_pgs %}
+      <div class="col-lg-4 col-md-6 pg-card-col">
+        <div class="pg-card">
+          <div class="pg-card-img-wrapper">
+            <img src="{{ url_for('static', filename=pg.primary_photo) }}" alt="{{ pg.name }}" class="pg-card-img"
+              onerror="this.src='{{ url_for('static', filename='images/pg/placeholder.svg') }}';">
+
+            <!-- Badges -->
+            <span class="badge-gender {{ pg.gender_category.lower() }}">
+              {% if pg.gender_category == 'Boys' %}
+              <i class="fa-solid fa-mars"></i> Boys Only
+              {% elif pg.gender_category == 'Girls' %}
+              <i class="fa-solid fa-venus"></i> Girls Only
+              {% else %}
+              <i class="fa-solid fa-venus-mars"></i> Co-living
+              {% endif %}
+            </span>
+
+            {% if pg.verified %}
+            <span class="badge-verified-pill">
+              <i class="fa-solid fa-circle-check text-gold"></i> Verified
+            </span>
+            {% endif %}
+
+            {% if pg.is_sample %}
+            <span class="badge-sample-pill">Demo Stay</span>
+            {% endif %}
+
+            <!-- Favourite Heart -->
+            <button type="button"
+              class="fav-btn {{ 'active' if current_user.is_authenticated and current_user.has_favourited(pg.id) }}"
+              data-pg-id="{{ pg.id }}" title="Save to Favourites">
+              <i
+                class="{{ 'fa-solid fa-heart' if current_user.is_authenticated and current_user.has_favourited(pg.id) else 'fa-regular fa-heart' }}"></i>
+            </button>
+          </div>
+
+          <div class="pg-card-body">
+            <div class="pg-card-area">
+              <i class="fa-solid fa-location-dot"></i> {{ pg.area }}, Bangalore
+            </div>
+            <h5 class="pg-card-title">
+              <a href="{{ url_for('pg_details', pg_id=pg.id) }}">{{ pg.name }}</a>
+            </h5>
+            <p class="pg-card-address">{{ pg.address }}</p>
+
+            <!-- Amenity chips -->
+            <div class="pg-amenities-row">
+              {% if pg.wifi_available %}
+              <span class="amenity-chip"><i class="fa-solid fa-wifi"></i> Wi-Fi</span>
+              {% endif %}
+              {% if pg.food_available %}
+              <span class="amenity-chip"><i class="fa-solid fa-utensils"></i> Food</span>
+              {% endif %}
+              {% if pg.ac_available %}
+              <span class="amenity-chip"><i class="fa-solid fa-snowflake"></i> AC</span>
+              {% endif %}
+              {% if pg.attached_washroom %}
+              <span class="amenity-chip"><i class="fa-solid fa-bath"></i> Attached Bath</span>
+              {% endif %}
+            </div>
+
+            <div class="pg-card-footer">
+              <div>
+                <div class="pg-rent-price">{{ pg.monthly_rent | currency_inr }} <span class="pg-rent-period">/
+                    month</span></div>
+                <div class="small text-muted">Deposit: {{ pg.security_deposit | currency_inr }}</div>
+              </div>
+              <div class="text-end">
+                <span class="pg-room-type-tag mb-1 d-inline-block">{{ pg.room_type }}</span>
+                <div>
+                  <a href="{{ url_for('pg_details', pg_id=pg.id) }}" class="btn btn-outline-dark btn-sm fw-semibold">
+                    Details <i class="fa-solid fa-chevron-right ms-1"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-12 text-center py-5">
+        <i class="fa-solid fa-house-chimney-crack text-muted fs-1 mb-3"></i>
+        <h5>No accommodations currently available</h5>
+        <p class="text-muted">Check back soon or explore other Bangalore locations.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================
+     WHY CHOOSE NIVORA?
+     ======================================================= -->
+<section class="py-5"
+  style="background: #0D0D0D; color: #FFFFFF; border-top: 1px solid rgba(212, 175, 55, 0.2); border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+  <div class="container py-4">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <span class="badge bg-dark text-gold border border-gold mb-2">THE NIVORA PROMISE</span>
+      <h2 class="fw-bold text-white mb-2">Why Discerning Residents Choose NIVORA</h2>
+      <p class="text-muted">We eliminate misleading broker listings, unexpected fees, and stressful flat-hunting in
+        Bangalore.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card" style="background: #141414; border-color: rgba(212, 175, 55, 0.2);">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-crosshairs"></i>
+          </div>
+          <h5 class="fw-bold text-white">Precision Location Discovery</h5>
+          <p class="text-muted mb-0">
+            Search PGs around specific tech hubs, metro stations, or use one-click GPS to calculate accurate commute
+            distances.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card" style="background: #141414; border-color: rgba(212, 175, 55, 0.2);">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <h5 class="fw-bold text-white">Transparent Rent & Zero Brokerage</h5>
+          <p class="text-muted mb-0">
+            Compare monthly rent, security deposits, and meal plans upfront. Never pay unexpected middleman commissions.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card" style="background: #141414; border-color: rgba(212, 175, 55, 0.2);">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+          <h5 class="fw-bold text-white">Interactive Leaflet Maps</h5>
+          <p class="text-muted mb-0">
+            Visualize all Bangalore accommodations directly on our interactive map. View prices, photos, and get
+            directions instantly.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card" style="background: #141414; border-color: rgba(212, 175, 55, 0.2);">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <h5 class="fw-bold text-white">Direct Owner Communication</h5>
+          <p class="text-muted mb-0">
+            Reach out directly via phone or WhatsApp with one tap, or submit an official enquiry through your dashboard.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card" style="background: #141414; border-color: rgba(212, 175, 55, 0.2);">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h5 class="fw-bold text-white">Verified Accommodations</h5>
+          <p class="text-muted mb-0">
+            Every listing marked with our Gold Verification badge has been physically inspected for security, hygiene,
+            and amenities.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6">
+        <div class="feature-card" style="background: #141414; border-color: rgba(212, 175, 55, 0.2);">
+          <div class="feature-icon-wrapper">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <h5 class="fw-bold text-white">Advanced Custom Filtering</h5>
+          <p class="text-muted mb-0">
+            Filter specifically by food availability, single or shared rooms, AC, attached washrooms, and high-speed
+            Wi-Fi.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================
+     HOW IT WORKS SECTION
+     ======================================================= -->
+<section class="py-5" style="background: #F8F7F3;">
+  <div class="container py-4">
+    <div class="text-center max-w-700 mx-auto mb-5">
+      <span class="badge bg-dark text-gold border border-gold mb-2">SIMPLE 5-STEP JOURNEY</span>
+      <h2 class="fw-bold mb-2">How NIVORA Works</h2>
+      <p class="text-muted">Moving to a new city has never been this seamless.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg col-md-4 col-sm-6">
+        <div class="step-card">
+          <div class="step-number-bubble">1</div>
+          <h6 class="fw-bold mb-2">Enter Location</h6>
+          <p class="small text-muted mb-0">Select your office, tech park, or preferred Bangalore neighborhood.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-4 col-sm-6">
+        <div class="step-card">
+          <div class="step-number-bubble">2</div>
+          <h6 class="fw-bold mb-2">Explore Nearby</h6>
+          <p class="small text-muted mb-0">Browse interactive map pins and filter by budget, gender, or room type.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-4 col-sm-6">
+        <div class="step-card">
+          <div class="step-number-bubble">3</div>
+          <h6 class="fw-bold mb-2">Compare Stays</h6>
+          <p class="small text-muted mb-0">Inspect real room photos, amenities, food menus, and house rules.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-6 col-sm-6">
+        <div class="step-card">
+          <div class="step-number-bubble">4</div>
+          <h6 class="fw-bold mb-2">Review Details</h6>
+          <p class="small text-muted mb-0">Check exact coordinates, security deposit terms, and notice period.</p>
+        </div>
+      </div>
+
+      <div class="col-lg col-md-6 col-sm-12">
+        <div class="step-card">
+          <div class="step-number-bubble">5</div>
+          <h6 class="fw-bold mb-2">Contact Owner</h6>
+          <p class="small text-muted mb-0">Direct phone call, WhatsApp chat, or schedule a physical visit with 0 broker
+            fees.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================
+     FREQUENTLY ASKED QUESTIONS
+     ======================================================= -->
+<section class="py-5" style="background: #FFFFFF; border-top: 1px solid #EAEAEA;">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="text-center mb-5">
+          <span class="badge bg-dark text-gold border border-gold mb-2">GOT QUESTIONS?</span>
+          <h2 class="fw-bold mb-2">Frequently Asked Questions</h2>
+          <p class="text-muted">Find quick answers to common queries regarding Bangalore PG stays.</p>
+        </div>
+
+        <div class="accordion" id="faqAccordion">
+          <div class="accordion-item mb-3 border rounded overflow-hidden">
+            <h2 class="accordion-header" id="faqHead1">
+              <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1"
+                aria-expanded="true" aria-controls="faq1">
+                How do I find a PG close to my office or college?
+              </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" aria-labelledby="faqHead1"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                You can select your office hub (e.g. Koramangala, Whitefield, Bellandur, Electronic City) from our
+                search bar or click "Find PGs Near My Location". NIVORA will calculate the exact distance in kilometers
+                using precision coordinates.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item mb-3 border rounded overflow-hidden">
+            <h2 class="accordion-header" id="faqHead2">
+              <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+                data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                Does NIVORA charge any brokerage fees?
+              </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" aria-labelledby="faqHead2"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                No! NIVORA is 100% free of brokerage fees for residents. You can connect directly with the PG owner or
+                caretaker via verified phone and WhatsApp links.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item mb-3 border rounded overflow-hidden">
+            <h2 class="accordion-header" id="faqHead3">
+              <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+                data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                Can I filter accommodations by food and dietary options?
+              </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" aria-labelledby="faqHead3"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                Yes. In our search filters, you can select whether you require food to be included. Each accommodation
+                listing specifies whether North Indian, South Indian, or both meal options are prepared.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item mb-3 border rounded overflow-hidden">
+            <h2 class="accordion-header" id="faqHead4">
+              <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+                data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">
+                How does accommodation verification work?
+              </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" aria-labelledby="faqHead4"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                Our verification team verifies physical amenities, CCTV coverage, food hygiene certificates, and owner
+                credentials before assigning our Gold Verification badge to a property.
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item mb-3 border rounded overflow-hidden">
+            <h2 class="accordion-header" id="faqHead5">
+              <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
+                data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">
+                Can accommodation owners list their properties on NIVORA?
+              </button>
+            </h2>
+            <div id="faq5" class="accordion-collapse collapse" aria-labelledby="faqHead5"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body text-muted">
+                Yes! PG owners can log into the partner portal or contact our concierge desk to list their properties,
+                upload high-resolution photographs, manage room inventories, and receive genuine tenant inquiries.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================
+     CALL TO ACTION BANNER
+     ======================================================= -->
+<section class="py-5"
+  style="background: linear-gradient(135deg, #111111 0%, #060606 100%); border-top: 1px solid var(--card-dark-border);">
+  <div class="container py-3">
+    <div class="row align-items-center justify-content-between g-4">
+      <div class="col-lg-8 text-white">
+        <h3 class="fw-bold mb-2">Relocating to Bangalore for work or studies?</h3>
+        <p class="text-muted mb-0">Join over 25,000 residents who found their ideal home with NIVORA. Zero brokers, zero
+          stress.</p>
+      </div>
+      <div class="col-lg-4 text-lg-end">
+        <a href="{{ url_for('search') }}" class="btn btn-gold btn-lg">
+          <i class="fa-solid fa-magnifying-glass me-1"></i> Start Exploring PGs
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

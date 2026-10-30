@@ -1,0 +1,35 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Environment Secrets
+.env
+.env.local
+
+# SQLite Databases
+instance/*.db
+*.sqlite
+*.sqlite3
+
+# Test & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# User Uploads (keep directory, exclude uploaded user files)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# IDE & OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+

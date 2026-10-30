@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile & Dashboard | NIVORA{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row g-4">
+    <!-- User Left Sidebar -->
+    <div class="col-lg-4">
+      <div class="profile-sidebar-card mb-4">
+        <div class="profile-avatar-circle">
+          {{ current_user.name[0] }}
+        </div>
+        <h4 class="fw-bold mb-1">{{ current_user.name }}</h4>
+        <p class="text-muted small mb-2">{{ current_user.email }}</p>
+        
+        <div>
+          <span class="badge {{ 'bg-dark text-gold border border-gold' if current_user.is_admin else 'bg-secondary' }}">
+            {{ 'Administrator' if current_user.is_admin else 'Resident Member' }}
+          </span>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="text-start">
+          <div class="small text-muted mb-1"><i class="fa-solid fa-phone text-gold me-2"></i>Phone Number</div>
+          <div class="fw-semibold mb-3">{{ current_user.phone }}</div>
+
+          <div class="small text-muted mb-1"><i class="fa-solid fa-calendar-check text-gold me-2"></i>Member Since</div>
+          <div class="fw-semibold mb-3">{{ current_user.created_at.strftime('%B %d, %Y') }}</div>
+
+          <div class="small text-muted mb-1"><i class="fa-solid fa-heart text-gold me-2"></i>Saved Accommodations</div>
+          <div class="fw-semibold">{{ favourites|length }} Properties</div>
+        </div>
+
+        <div class="d-grid mt-4">
+          <a href="{{ url_for('favorites') }}" class="btn btn-outline-dark btn-sm">
+            <i class="fa-solid fa-heart text-danger me-1"></i> View Saved PGs
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Tabs Content -->
+    <div class="col-lg-8">
+      <div class="bg-white p-4 border rounded shadow-sm mb-4">
+        <ul class="nav nav-tabs border-bottom mb-4" id="profileTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold text-dark" id="enquiries-tab" data-bs-toggle="tab" data-bs-target="#enquiries-pane" type="button" role="tab">
+              <i class="fa-solid fa-clock-rotate-left text-gold me-1"></i> My Enquiries ({{ enquiries|length }})
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold text-dark" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit-pane" type="button" role="tab">
+              <i class="fa-solid fa-user-pen text-gold me-1"></i> Edit Profile
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold text-dark" id="security-tab" data-bs-toggle="tab" data-bs-target="#security-pane" type="button" role="tab">
+              <i class="fa-solid fa-lock text-gold me-1"></i> Security & Password
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content" id="profileTabContent">
+          <!-- TAB 1: ENQUIRIES -->
+          <div class="tab-pane fade show active" id="enquiries-pane" role="tabpanel">
+            <h5 class="fw-bold mb-3">Submitted Property Enquiries</h5>
+            {% if enquiries %}
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead class="table-light small">
+                    <tr>
+                      <th>Accommodation</th>
+                      <th>Area</th>
+                      <th>Date</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for enq in enquiries %}
+                      <tr>
+                        <td>
+                          <strong><a href="{{ url_for('pg_details', pg_id=enq.pg.id) }}" class="text-dark">{{ enq.pg.name }}</a></strong>
+                          <div class="text-muted small">Rent: {{ enq.pg.monthly_rent | currency_inr }}/mo</div>
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ enq.pg.area }}</span></td>
+                        <td class="small text-muted">{{ enq.created_at.strftime('%d %b, %Y') }}</td>
+                        <td>
+                          <span class="status-badge status-{{ enq.status.replace(' ', '_') }}">
+                            {{ enq.status }}
+                          </span>
+                        </td>
+                        <td>
+                          <a href="{{ url_for('pg_details', pg_id=enq.pg.id) }}" class="btn btn-outline-dark btn-sm py-1 px-2">
+                            View PG
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <div class="text-center py-4 text-muted">
+                <i class="fa-solid fa-envelope-open display-6 mb-2 text-muted"></i>
+                <p>You haven't submitted any enquiries yet.</p>
+                <a href="{{ url_for('search') }}" class="btn btn-gold btn-sm">Find Accommodations</a>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- TAB 2: EDIT PROFILE -->
+          <div class="tab-pane fade" id="edit-pane" role="tabpanel">
+            <h5 class="fw-bold mb-3">Update Personal Details</h5>
+            <form method="POST" action="{{ url_for('profile') }}">
+              {{ profile_form.hidden_tag() }}
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">{{ profile_form.name.label.text }}</label>
+                {{ profile_form.name(class="form-control") }}
+                {% for error in profile_form.name.errors %}
+                  <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">{{ profile_form.phone.label.text }}</label>
+                {{ profile_form.phone(class="form-control") }}
+                {% for error in profile_form.phone.errors %}
+                  <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">Email Address</label>
+                <input type="text" class="form-control bg-light" value="{{ current_user.email }}" readonly>
+                <div class="form-text small">Email cannot be altered directly for security reasons.</div>
+              </div>
+
+              <div class="text-end">
+                {{ profile_form.submit(class="btn btn-gold") }}
+              </div>
+            </form>
+          </div>
+
+          <!-- TAB 3: SECURITY & PASSWORD -->
+          <div class="tab-pane fade" id="security-pane" role="tabpanel">
+            <h5 class="fw-bold mb-3">Change Account Password</h5>
+            <form method="POST" action="{{ url_for('profile') }}">
+              {{ password_form.hidden_tag() }}
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">{{ password_form.current_password.label.text }}</label>
+                {{ password_form.current_password(class="form-control") }}
+                {% for error in password_form.current_password.errors %}
+                  <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">{{ password_form.new_password.label.text }}</label>
+                {{ password_form.new_password(class="form-control") }}
+                {% for error in password_form.new_password.errors %}
+                  <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label fw-semibold small">{{ password_form.confirm_new_password.label.text }}</label>
+                {{ password_form.confirm_new_password(class="form-control") }}
+                {% for error in password_form.confirm_new_password.errors %}
+                  <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+              </div>
+
+              <div class="text-end">
+                {{ password_form.submit(class="btn btn-gold") }}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,97 @@
+/* ===================================================================
+   NIVORA – Mobile & Multi-Screen Responsive Stylesheet
+   Ensures seamless UX across desktop, laptop, tablet, and mobile devices
+   =================================================================== */
+
+@media (max-width: 991.98px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .hero-section {
+    padding: 3.5rem 0 3rem;
+  }
+
+  #search-map {
+    height: 400px;
+    margin-bottom: 2rem;
+    position: static;
+  }
+
+  .filter-sidebar {
+    position: static;
+    margin-bottom: 2rem;
+  }
+
+  .owner-contact-card {
+    position: static;
+    margin-top: 2rem;
+  }
+
+  .navbar-collapse {
+    background: #0D0D0D;
+    padding: 1.25rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--card-dark-border);
+    margin-top: 0.75rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero-title {
+    font-size: 2.05rem;
+  }
+
+  .hero-search-card {
+    padding: 1.25rem;
+  }
+
+  .pg-card-img-wrapper {
+    height: 190px;
+  }
+
+  .detail-gallery-main {
+    height: 280px;
+  }
+
+  .detail-thumb {
+    height: 70px;
+  }
+
+  .btn-gold, .btn-outline-gold, .btn-dark-luxury {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-heading {
+    margin-top: 1.5rem;
+  }
+
+  .location-card {
+    height: 150px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-pill {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.75rem;
+  }
+
+  .pg-card-body {
+    padding: 1rem;
+  }
+
+  .pg-rent-price {
+    font-size: 1.15rem;
+  }
+}
+

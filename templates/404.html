@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Page Not Found | NIVORA{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center my-5">
+  <div class="display-1 fw-bold text-gold font-monospace">404</div>
+  <h2 class="fw-bold mb-3">Accommodation or Page Not Found</h2>
+  <p class="text-muted max-w-500 mx-auto mb-4">
+    The page or listing you are looking for may have been moved, removed, or is temporarily unavailable.
+  </p>
+  <div class="d-flex justify-content-center gap-3">
+    <a href="{{ url_for('index') }}" class="btn btn-gold">Return to Home</a>
+    <a href="{{ url_for('search') }}" class="btn btn-outline-dark">Browse All PGs</a>
+  </div>
+</div>
+{% endblock %}
+

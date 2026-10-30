@@ -1,0 +1,150 @@
+/* ===================================================================
+   NIVORA – Authentication & Profile Styling
+   =================================================================== */
+
+.auth-wrapper {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background: 
+    radial-gradient(circle at 10% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.05) 0%, transparent 35%),
+    #0A0A0A;
+}
+
+.auth-card {
+  background: #141414;
+  border: 1px solid var(--card-dark-border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(212, 175, 55, 0.15);
+  overflow: hidden;
+  width: 100%;
+  max-width: 520px;
+}
+
+.auth-header {
+  padding: 2.25rem 2.25rem 1.25rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.auth-title {
+  color: #FFFFFF;
+  font-size: 1.65rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.auth-subtitle {
+  color: #A0A0A0;
+  font-size: 0.92rem;
+}
+
+.auth-body {
+  padding: 2rem 2.25rem 2.5rem;
+}
+
+.auth-form-group {
+  margin-bottom: 1.35rem;
+}
+
+.auth-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 0.4rem;
+}
+
+.auth-input {
+  width: 100%;
+  background: #0A0A0A;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  color: #FFFFFF !important;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.auth-input:focus {
+  background: #101010;
+  border-color: var(--gold-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+
+.auth-footer-text {
+  text-align: center;
+  color: #A0A0A0;
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+}
+
+.auth-footer-text a {
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+.auth-footer-text a:hover {
+  color: var(--gold-light);
+  text-decoration: underline;
+}
+
+/* Profile Tabs & Dashboard */
+.profile-sidebar-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-avatar-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #0E0E0E;
+  border: 2px solid var(--gold-primary);
+  color: var(--gold-light);
+  font-size: 2.2rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  box-shadow: var(--shadow-gold);
+}
+
+.status-badge {
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+.status-Pending {
+  background: #FFF3CD;
+  color: #856404;
+}
+
+.status-In-Review, .status-In_Review {
+  background: #CCE5FF;
+  color: #004085;
+}
+
+.status-Contacted {
+  background: #D4EDDA;
+  color: #155724;
+}
+
+.status-Resolved, .status-Closed {
+  background: #E2E3E5;
+  color: #383D41;
+}
+

@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pg.name }} in {{ pg.area }} | NIVORA PG Finder{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Header -->
+<div class="py-3 bg-dark border-bottom border-secondary">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0 small text-muted">
+        <li class="breadcrumb-item"><a href="{{ url_for('index') }}" class="text-gold">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('search') }}" class="text-gold">Bangalore</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('search', area=pg.area) }}" class="text-gold">{{ pg.area }}</a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">{{ pg.name }}</li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Title, Badges & Favourites Bar -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+        <span class="badge bg-dark text-gold border border-gold font-monospace">
+          <i class="fa-solid fa-location-dot"></i> {{ pg.area }}, Bangalore
+        </span>
+
+        <span class="badge {{ 'bg-primary' if pg.gender_category == 'Boys' else ('bg-danger' if pg.gender_category == 'Girls' else 'bg-secondary') }}">
+          {{ pg.gender_category }}
+        </span>
+
+        <span class="badge bg-light text-dark border">
+          {{ pg.room_type }}
+        </span>
+
+        {% if pg.verified %}
+          <span class="badge bg-dark text-gold border border-gold">
+            <i class="fa-solid fa-circle-check text-gold"></i> Verified Listing
+          </span>
+        {% endif %}
+
+        {% if pg.is_sample %}
+          <span class="badge bg-secondary">Demo Listing</span>
+        {% endif %}
+      </div>
+
+      <h1 class="fw-bold mb-1">{{ pg.name }}</h1>
+      <p class="text-muted mb-0"><i class="fa-solid fa-map-pin text-gold me-1"></i> {{ pg.address }}</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-outline-dark fav-btn-detail fav-btn {{ 'active' if is_favourited }}" data-pg-id="{{ pg.id }}">
+        <i class="{{ 'fa-solid fa-heart text-danger' if is_favourited else 'fa-regular fa-heart' }} me-1"></i>
+        <span>{{ 'Saved to Favourites' if is_favourited else 'Save to Favourites' }}</span>
+      </button>
+
+      {% if pg.whatsapp_url %}
+        <a href="{{ pg.whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-success d-inline-flex align-items-center gap-2">
+          <i class="fa-brands fa-whatsapp fs-5"></i>
+          <span>WhatsApp Owner</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- LEFT: GALLERY & PROPERTY DETAILS -->
+    <div class="col-lg-8">
+      <!-- Main Photo Display -->
+      <div class="detail-gallery-main mb-3">
+        <img id="detailMainImage" src="{{ url_for('static', filename=pg.primary_photo) }}" alt="{{ pg.name }}" onerror="this.src='{{ url_for('static', filename='images/pg/placeholder.svg') }}';">
+      </div>
+
+      <!-- Thumbnails Carousel / Strip -->
+      {% if pg.photo_list|length > 1 %}
+        <div class="row g-2 mb-4">
+          {% for photo in pg.photo_list %}
+            <div class="col-3">
+              <div class="detail-thumb {{ 'active' if loop.first }}" data-src="{{ url_for('static', filename=photo) }}">
+                <img src="{{ url_for('static', filename=photo) }}" alt="Thumbnail {{ loop.index }}">
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Key Specs Pill Matrix -->
+      <div class="row g-3 p-3 bg-white border rounded mb-4 shadow-sm">
+        <div class="col-6 col-md-3 border-end">
+          <div class="small text-muted">Monthly Rent</div>
+          <div class="fs-5 fw-bold text-dark font-monospace">{{ pg.monthly_rent | currency_inr }}</div>
+          <div class="text-muted" style="font-size: 11px;">Per Bed / Month</div>
+        </div>
+        <div class="col-6 col-md-3 border-end-md">
+          <div class="small text-muted">Security Deposit</div>
+          <div class="fs-5 fw-bold text-dark font-monospace">{{ pg.security_deposit | currency_inr }}</div>
+          <div class="text-muted" style="font-size: 11px;">Refundable</div>
+        </div>
+        <div class="col-6 col-md-3 border-end">
+          <div class="small text-muted">Sharing Type</div>
+          <div class="fs-6 fw-bold text-dark mt-1">{{ pg.room_type }}</div>
+          <div class="text-muted" style="font-size: 11px;">Fully Furnished</div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="small text-muted">Availability</div>
+          <div class="fs-6 fw-bold text-success mt-1">
+            <i class="fa-solid fa-clock-rotate-left"></i> {{ pg.availability }}
+          </div>
+          <div class="text-muted" style="font-size: 11px;">Ready to move</div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
+      <div class="bg-white p-4 border rounded mb-4 shadow-sm">
+        <h4 class="fw-bold mb-3"><i class="fa-solid fa-align-left text-gold me-2"></i>About This Accommodation</h4>
+        <div class="text-secondary" style="white-space: pre-line; line-height: 1.8;">
+          {{ pg.description }}
+        </div>
+      </div>
+
+      <!-- Amenities & Facilities Grid -->
+      <div class="bg-white p-4 border rounded mb-4 shadow-sm">
+        <h4 class="fw-bold mb-3"><i class="fa-solid fa-circle-check text-gold me-2"></i>Facilities & Amenities</h4>
+        <div class="row g-3">
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.wifi_available }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-wifi"></i></div>
+              <div>
+                <div class="fw-bold small">High-Speed Wi-Fi</div>
+                <div class="text-muted" style="font-size: 11px;">{{ 'Included (300 Mbps)' if pg.wifi_available else 'Not Included' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.food_available }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-utensils"></i></div>
+              <div>
+                <div class="fw-bold small">Food & Meals</div>
+                <div class="text-muted" style="font-size: 11px;">{{ 'Breakfast & Dinner' if pg.food_available else 'Self Cooking Only' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.ac_available }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-snowflake"></i></div>
+              <div>
+                <div class="fw-bold small">Air Conditioning</div>
+                <div class="text-muted" style="font-size: 11px;">{{ 'AC Installed' if pg.ac_available else 'Non-AC Room' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.laundry_available }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-shirt"></i></div>
+              <div>
+                <div class="fw-bold small">Washing & Laundry</div>
+                <div class="text-muted" style="font-size: 11px;">{{ 'Automatic Machines' if pg.laundry_available else 'Not Available' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.parking_available }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-square-parking"></i></div>
+              <div>
+                <div class="fw-bold small">Vehicle Parking</div>
+                <div class="text-muted" style="font-size: 11px;">{{ '2 & 4 Wheeler' if pg.parking_available else 'Street Parking' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.cctv_available }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-video"></i></div>
+              <div>
+                <div class="fw-bold small">24/7 Security & CCTV</div>
+                <div class="text-muted" style="font-size: 11px;">{{ 'Biometric & CCTV' if pg.cctv_available else 'Standard Locks' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.housekeeping_available }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-broom"></i></div>
+              <div>
+                <div class="fw-bold small">Daily Housekeeping</div>
+                <div class="text-muted" style="font-size: 11px;">{{ 'Daily Cleaning' if pg.housekeeping_available else 'Weekly' }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <div class="amenity-grid-item {{ 'opacity-50' if not pg.attached_washroom }}">
+              <div class="amenity-grid-icon"><i class="fa-solid fa-bath"></i></div>
+              <div>
+                <div class="fw-bold small">Attached Bathroom</div>
+                <div class="text-muted" style="font-size: 11px;">{{ 'Private Ensuite' if pg.attached_washroom else 'Shared Corridor Bath' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- House Rules & Policies -->
+      <div class="bg-white p-4 border rounded mb-4 shadow-sm">
+        <h4 class="fw-bold mb-3"><i class="fa-solid fa-clipboard-list text-gold me-2"></i>House Rules & Code of Conduct</h4>
+        {% if pg.rules %}
+          <div class="text-secondary" style="white-space: pre-line; line-height: 1.8;">
+            {{ pg.rules }}
+          </div>
+        {% else %}
+          <ul class="text-muted mb-0">
+            <li>Standard check-in ID proof (Aadhaar / Passport / College ID) required.</li>
+            <li>Maintain quiet hours after 10:30 PM to respect co-residents.</li>
+            <li>Notice period: Minimum 30 days prior notice required before vacating.</li>
+          </ul>
+        {% endif %}
+      </div>
+
+      <!-- Interactive Leaflet Map for Location -->
+      <div class="bg-white p-4 border rounded mb-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h4 class="fw-bold mb-0"><i class="fa-solid fa-map-location text-gold me-2"></i>Map & Neighborhood</h4>
+          <span class="small font-monospace text-muted">{{ pg.latitude }}, {{ pg.longitude }}</span>
+        </div>
+        <p class="text-muted small mb-3">
+          Exact coordinates verified. Use map controls to inspect nearby transit, cafes, and markets.
+        </p>
+        <div id="detail-map"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: OWNER CONTACT & DIRECT ENQUIRY CARD -->
+    <div class="col-lg-4">
+      <div class="owner-contact-card">
+        <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom border-secondary">
+          <div class="profile-avatar-circle" style="width: 58px; height: 58px; font-size: 1.4rem; margin: 0;">
+            {{ pg.owner_name[0] }}
+          </div>
+          <div>
+            <div class="small text-gold fw-bold text-uppercase">Listed By</div>
+            <h5 class="fw-bold mb-0 text-white">{{ pg.owner_name }}</h5>
+            <div class="small text-muted">Property Host / Caretaker</div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="small text-muted mb-1">Direct Phone</div>
+          <a href="tel:{{ pg.owner_phone }}" class="fs-5 fw-bold text-gold text-decoration-none d-flex align-items-center gap-2">
+            <i class="fa-solid fa-phone"></i> {{ pg.owner_phone }}
+          </a>
+        </div>
+
+        {% if pg.whatsapp_url %}
+          <div class="d-grid mb-4">
+            <a href="{{ pg.whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-success py-2 fw-semibold">
+              <i class="fa-brands fa-whatsapp fs-5 me-1"></i> Quick WhatsApp Enquiry
+            </a>
+          </div>
+        {% endif %}
+
+        <hr class="border-secondary my-4">
+
+        <!-- Official Enquiry Form -->
+        <h5 class="fw-bold text-white mb-3">
+          <i class="fa-solid fa-envelope-open-text text-gold me-1"></i> Schedule a Visit / Enquiry
+        </h5>
+
+        <form method="POST" action="{{ url_for('pg_details', pg_id=pg.id) }}">
+          {{ enquiry_form.hidden_tag() }}
+
+          <div class="mb-3">
+            <label class="auth-label">{{ enquiry_form.name.label.text }}</label>
+            {{ enquiry_form.name(class="auth-input", placeholder="Enter your full name") }}
+            {% for error in enquiry_form.name.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="auth-label">{{ enquiry_form.email.label.text }}</label>
+            {{ enquiry_form.email(class="auth-input", placeholder="name@domain.com") }}
+            {% for error in enquiry_form.email.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="auth-label">{{ enquiry_form.phone.label.text }}</label>
+            {{ enquiry_form.phone(class="auth-input", placeholder="+91 98765 43210") }}
+            {% for error in enquiry_form.phone.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="auth-label">{{ enquiry_form.message.label.text }}</label>
+            {{ enquiry_form.message(class="auth-input", rows=3, placeholder="Hi, I am interested in viewing this accommodation. Is a bed available from next Monday?") }}
+            {% for error in enquiry_form.message.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-gold py-2">
+              <i class="fa-solid fa-paper-plane me-1"></i> Send Enquiry to Host
+            </button>
+          </div>
+
+          <div class="small text-muted text-center mt-3" style="font-size: 11px;">
+            <i class="fa-solid fa-lock text-gold me-1"></i> Your contact information is never shared with third-party telemarketers.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Similar PGs in this Area -->
+  {% if similar_pgs %}
+    <div class="mt-5 pt-4 border-top">
+      <h3 class="fw-bold mb-4">More Accommodations in {{ pg.area }}</h3>
+      <div class="row g-4">
+        {% for sim in similar_pgs %}
+          <div class="col-md-4">
+            <div class="pg-card">
+              <div class="pg-card-img-wrapper" style="height: 180px;">
+                <img src="{{ url_for('static', filename=sim.primary_photo) }}" alt="{{ sim.name }}" class="pg-card-img">
+                <span class="badge-gender {{ sim.gender_category.lower() }}">{{ sim.gender_category }}</span>
+              </div>
+              <div class="pg-card-body">
+                <div class="pg-card-area">{{ sim.area }}</div>
+                <h6 class="fw-bold mb-1"><a href="{{ url_for('pg_details', pg_id=sim.id) }}">{{ sim.name }}</a></h6>
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                  <span class="fw-bold text-dark font-monospace">{{ sim.monthly_rent | currency_inr }}<small class="text-muted font-normal">/mo</small></span>
+                  <a href="{{ url_for('pg_details', pg_id=sim.id) }}" class="btn btn-outline-dark btn-sm">View</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    initDetailMap({{ pg.latitude }}, {{ pg.longitude }}, {{ pg.name | tojson }}, {{ pg.address | tojson }});
+  });
+</script>
+{% endblock %}
+

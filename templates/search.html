@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+
+{% block title %}Search PG Accommodations in Bangalore | NIVORA{% endblock %}
+
+{% block content %}
+<!-- Search Page Header -->
+<div class="search-page-header">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <h2 class="text-white fw-bold mb-1">
+          {% if selected_area %}
+            PG Accommodations in <span class="text-gold">{{ selected_area }}</span>
+          {% elif location_label %}
+            PGs Near <span class="text-gold">{{ location_label }}</span>
+          {% else %}
+            Explore Accommodations in <span class="text-gold">Bangalore</span>
+          {% endif %}
+        </h2>
+        <p class="text-muted mb-0 small">
+          Showing <span class="text-white fw-bold">{{ total_results }}</span> available accommodations matching your preferences.
+        </p>
+      </div>
+
+      <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+        <!-- View Toggle Buttons -->
+        <div class="btn-group shadow-sm" role="group" aria-label="View Toggle">
+          <button type="button" class="btn btn-dark-luxury btn-sm active" data-view-toggle="split">
+            <i class="fa-solid fa-table-columns me-1"></i> Split View
+          </button>
+          <button type="button" class="btn btn-dark-luxury btn-sm" data-view-toggle="list">
+            <i class="fa-solid fa-list me-1"></i> List
+          </button>
+          <button type="button" class="btn btn-dark-luxury btn-sm" data-view-toggle="map">
+            <i class="fa-solid fa-map-location-dot me-1"></i> Map
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Search & Results Body -->
+<div class="container-fluid px-lg-5 py-4">
+  <div class="row g-4">
+    <!-- LEFT SIDEBAR: ADVANCED FILTERS -->
+    <div class="col-xl-3 col-lg-4">
+      <div class="filter-sidebar">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+          <h5 class="fw-bold mb-0"><i class="fa-solid fa-sliders text-gold me-2"></i>Filters</h5>
+          <a href="{{ url_for('search') }}" class="btn btn-link text-muted p-0 small text-decoration-none" id="clearFiltersBtn">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </a>
+        </div>
+
+        <form action="{{ url_for('search') }}" method="GET" id="searchForm">
+          <!-- Hidden inputs for coordinates if geolocation active -->
+          <input type="hidden" name="lat" id="search_lat" value="{{ user_lat }}">
+          <input type="hidden" name="lon" id="search_lon" value="{{ user_lon }}">
+          <input type="hidden" name="location_name" value="{{ location_label }}">
+
+          <!-- Keyword Search -->
+          <div class="mb-3">
+            <label class="filter-group-title">Search Keywords</label>
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-light"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+              <input type="text" name="q" class="form-control" placeholder="E.g. Aurum, ITPL, Near Metro" value="{{ search_keyword }}">
+            </div>
+          </div>
+
+          <!-- Bangalore Area Selector -->
+          <div class="mb-3">
+            <label class="filter-group-title">Bangalore Area</label>
+            <select name="area" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="">All Bangalore Neighborhoods</option>
+              {% for area in bangalore_areas %}
+                <option value="{{ area }}" {{ 'selected' if selected_area == area }}>{{ area }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Geolocation Trigger -->
+          <div class="mb-3">
+            <button type="button" class="btn btn-location btn-detect-location w-100 btn-sm">
+              <i class="fa-solid fa-location-crosshairs text-gold"></i>
+              <span>Use Current GPS Location</span>
+            </button>
+            {% if user_lat and user_lon %}
+              <div class="small text-success mt-1">
+                <i class="fa-solid fa-circle-check"></i> GPS active: {{ user_lat|round(3) }}, {{ user_lon|round(3) }}
+              </div>
+            {% endif %}
+          </div>
+
+          <hr class="my-3">
+
+          <!-- Sort Order -->
+          <div class="mb-3">
+            <label class="filter-group-title">Sort By</label>
+            <select name="sort" id="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="newest" {{ 'selected' if sort_by == 'newest' }}>Recently Added & Verified</option>
+              <option value="rent_asc" {{ 'selected' if sort_by == 'rent_asc' }}>Lowest Rent First</option>
+              <option value="rent_desc" {{ 'selected' if sort_by == 'rent_desc' }}>Highest Rent First</option>
+              <option value="distance" {{ 'selected' if sort_by == 'distance' }}>Nearest to My Location</option>
+            </select>
+          </div>
+
+          <!-- Budget Range -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="filter-group-title mb-0">Max Monthly Rent</label>
+              <span class="small font-monospace text-gold fw-bold" id="max_rent_display">
+                {{ '₹' ~ max_rent if max_rent else 'Any' }}
+              </span>
+            </div>
+            <input type="range" class="form-range" name="max_rent" id="max_rent" min="5000" max="35000" step="1000" value="{{ max_rent if max_rent else 35000 }}">
+            <div class="d-flex justify-content-between text-muted" style="font-size: 11px;">
+              <span>₹5k</span>
+              <span>₹20k</span>
+              <span>₹35k+</span>
+            </div>
+          </div>
+
+          <!-- Gender Category -->
+          <div class="mb-3">
+            <label class="filter-group-title">Gender Category</label>
+            <div class="d-flex flex-column gap-1">
+              <label class="filter-check-label">
+                <input type="radio" name="gender" value="all" {{ 'checked' if not selected_gender or selected_gender == 'all' }} onchange="this.form.submit()">
+                <span>All Accommodations</span>
+              </label>
+              <label class="filter-check-label">
+                <input type="radio" name="gender" value="Co-living" {{ 'checked' if selected_gender == 'Co-living' }} onchange="this.form.submit()">
+                <span>Co-living (Unisex)</span>
+              </label>
+              <label class="filter-check-label">
+                <input type="radio" name="gender" value="Boys" {{ 'checked' if selected_gender == 'Boys' }} onchange="this.form.submit()">
+                <span>Boys PG Only</span>
+              </label>
+              <label class="filter-check-label">
+                <input type="radio" name="gender" value="Girls" {{ 'checked' if selected_gender == 'Girls' }} onchange="this.form.submit()">
+                <span>Girls PG Only</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Room Sharing Type -->
+          <div class="mb-3">
+            <label class="filter-group-title">Room Sharing Type</label>
+            <select name="room_type" class="form-select form-select-sm" onchange="this.form.submit()">
+              <option value="all">Any Room Sharing</option>
+              <option value="Single Sharing" {{ 'selected' if selected_room_type == 'Single Sharing' }}>Single Sharing (Private)</option>
+              <option value="Double Sharing" {{ 'selected' if selected_room_type == 'Double Sharing' }}>Double Sharing (2 Beds)</option>
+              <option value="Triple Sharing" {{ 'selected' if selected_room_type == 'Triple Sharing' }}>Triple Sharing (3 Beds)</option>
+              <option value="Four Sharing" {{ 'selected' if selected_room_type == 'Four Sharing' }}>Four Sharing (4 Beds)</option>
+            </select>
+          </div>
+
+          <!-- Food Availability -->
+          <div class="mb-3">
+            <label class="filter-group-title">Food & Meals</label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="food" value="yes" {{ 'checked' if selected_food == 'yes' }} onchange="this.form.submit()">
+              <span>Food Included (Meals Provided)</span>
+            </label>
+          </div>
+
+          <!-- Facilities & Amenities -->
+          <div class="mb-3">
+            <label class="filter-group-title">Amenities & Facilities</label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="wifi" value="1" {{ 'checked' if wifi }} onchange="this.form.submit()">
+              <span>High-speed Wi-Fi</span>
+            </label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="ac" value="1" {{ 'checked' if ac }} onchange="this.form.submit()">
+              <span>Air Conditioning (AC)</span>
+            </label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="laundry" value="1" {{ 'checked' if laundry }} onchange="this.form.submit()">
+              <span>Washing Machine / Laundry</span>
+            </label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="parking" value="1" {{ 'checked' if parking }} onchange="this.form.submit()">
+              <span>Vehicle Parking</span>
+            </label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="cctv" value="1" {{ 'checked' if cctv }} onchange="this.form.submit()">
+              <span>24/7 CCTV & Security</span>
+            </label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="housekeeping" value="1" {{ 'checked' if housekeeping }} onchange="this.form.submit()">
+              <span>Regular Housekeeping</span>
+            </label>
+            <label class="filter-check-label">
+              <input type="checkbox" name="attached_washroom" value="1" {{ 'checked' if attached_washroom }} onchange="this.form.submit()">
+              <span>Attached Bathroom</span>
+            </label>
+          </div>
+
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-gold btn-sm py-2">
+              <i class="fa-solid fa-filter"></i> Apply Filters
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- MIDDLE: PG RESULTS LIST -->
+    <div class="col-xl-5 col-lg-8" id="search-list-col">
+      <!-- Active Filters Display -->
+      <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+        <span class="small text-muted fw-semibold">Active:</span>
+        {% if selected_area %}
+          <span class="badge bg-dark text-gold border border-gold py-1 px-2">
+            Area: {{ selected_area }}
+            <a href="{{ url_for('search', q=search_keyword, gender=selected_gender, room_type=selected_room_type) }}" class="text-white ms-1 text-decoration-none">&times;</a>
+          </span>
+        {% endif %}
+        {% if selected_gender and selected_gender != 'all' %}
+          <span class="badge bg-dark text-gold border border-gold py-1 px-2">
+            Gender: {{ selected_gender }}
+          </span>
+        {% endif %}
+        {% if selected_room_type and selected_room_type != 'all' %}
+          <span class="badge bg-dark text-gold border border-gold py-1 px-2">
+            {{ selected_room_type }}
+          </span>
+        {% endif %}
+        {% if max_rent %}
+          <span class="badge bg-dark text-gold border border-gold py-1 px-2">
+            Max: ₹{{ max_rent }}
+          </span>
+        {% endif %}
+      </div>
+
+      <!-- Listings Grid / List -->
+      <div class="row g-3">
+        {% for pg in pgs %}
+          <div class="col-md-6 col-lg-12 pg-card-col">
+            <div class="pg-card">
+              <div class="row g-0 flex-md-row">
+                <div class="col-md-5">
+                  <div class="pg-card-img-wrapper h-100" style="min-height: 200px;">
+                    <img src="{{ url_for('static', filename=pg.primary_photo) }}" alt="{{ pg.name }}" class="pg-card-img" onerror="this.src='{{ url_for('static', filename='images/pg/placeholder.svg') }}';">
+                    
+                    <span class="badge-gender {{ pg.gender_category.lower() }}">
+                      {% if pg.gender_category == 'Boys' %}
+                        <i class="fa-solid fa-mars"></i> Boys
+                      {% elif pg.gender_category == 'Girls' %}
+                        <i class="fa-solid fa-venus"></i> Girls
+                      {% else %}
+                        <i class="fa-solid fa-venus-mars"></i> Co-living
+                      {% endif %}
+                    </span>
+
+                    {% if pg.verified %}
+                      <span class="badge-verified-pill">
+                        <i class="fa-solid fa-circle-check text-gold"></i> Verified
+                      </span>
+                    {% endif %}
+
+                    {% if pg.is_sample %}
+                      <span class="badge-sample-pill">Demo</span>
+                    {% endif %}
+
+                    <button type="button" class="fav-btn {{ 'active' if current_user.is_authenticated and current_user.has_favourited(pg.id) }}" data-pg-id="{{ pg.id }}">
+                      <i class="{{ 'fa-solid fa-heart' if current_user.is_authenticated and current_user.has_favourited(pg.id) else 'fa-regular fa-heart' }}"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="col-md-7 d-flex flex-column">
+                  <div class="pg-card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <div class="pg-card-area">
+                        <i class="fa-solid fa-location-dot"></i> {{ pg.area }}
+                      </div>
+                      {% if pg.calculated_distance is not none %}
+                        <span class="pg-distance-badge mb-0">
+                          <i class="fa-solid fa-location-arrow"></i> {{ pg.calculated_distance }} km away
+                        </span>
+                      {% endif %}
+                    </div>
+
+                    <h5 class="pg-card-title mb-1">
+                      <a href="{{ url_for('pg_details', pg_id=pg.id) }}">{{ pg.name }}</a>
+                    </h5>
+                    <p class="pg-card-address mb-2">{{ pg.address }}</p>
+
+                    <!-- Amenities row -->
+                    <div class="pg-amenities-row mb-2">
+                      {% if pg.wifi_available %}
+                        <span class="amenity-chip"><i class="fa-solid fa-wifi"></i> Wi-Fi</span>
+                      {% endif %}
+                      {% if pg.food_available %}
+                        <span class="amenity-chip"><i class="fa-solid fa-utensils"></i> Food</span>
+                      {% endif %}
+                      {% if pg.ac_available %}
+                        <span class="amenity-chip"><i class="fa-solid fa-snowflake"></i> AC</span>
+                      {% endif %}
+                      {% if pg.attached_washroom %}
+                        <span class="amenity-chip"><i class="fa-solid fa-bath"></i> Attached</span>
+                      {% endif %}
+                    </div>
+
+                    <div class="pg-card-footer mt-auto pt-2">
+                      <div>
+                        <div class="pg-rent-price">{{ pg.monthly_rent | currency_inr }} <span class="pg-rent-period">/ mo</span></div>
+                        <div class="small text-muted">{{ pg.room_type }}</div>
+                      </div>
+                      <div class="d-flex gap-2">
+                        {% if pg.whatsapp_url %}
+                          <a href="{{ pg.whatsapp_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-success btn-sm" title="Chat on WhatsApp">
+                            <i class="fa-brands fa-whatsapp"></i>
+                          </a>
+                        {% endif %}
+                        <a href="{{ url_for('pg_details', pg_id=pg.id) }}" class="btn btn-gold btn-sm">
+                          View Details
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-12 text-center py-5 bg-white rounded border">
+            <div class="py-4">
+              <i class="fa-solid fa-magnifying-glass-location text-muted display-4 mb-3"></i>
+              <h5 class="fw-bold">No Accommodations Found</h5>
+              <p class="text-muted max-w-500 mx-auto">
+                We couldn't find any listings matching your specific combination of filters. Try expanding your budget range or selecting "All Accommodations".
+              </p>
+              <a href="{{ url_for('search') }}" class="btn btn-outline-dark btn-sm mt-2">
+                <i class="fa-solid fa-arrow-rotate-left me-1"></i> Clear All Filters
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- RIGHT: INTERACTIVE LEAFLET MAP -->
+    <div class="col-xl-4 col-lg-12" id="search-map-col">
+      <div class="position-sticky" style="top: 90px;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small text-muted fw-semibold">
+            <i class="fa-solid fa-map-pin text-gold me-1"></i> Interactive Bangalore Map
+          </span>
+          <span class="badge bg-dark text-gold small">OpenStreetMap • Leaflet</span>
+        </div>
+        <div id="search-map"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Safely inject Python listings array into Leaflet map initializer
+  const mapData = {{ map_pgs_data | tojson | safe }};
+  const userLat = {{ user_lat if user_lat else 'null' }};
+  const userLon = {{ user_lon if user_lon else 'null' }};
+
+  document.addEventListener('DOMContentLoaded', function() {
+    initSearchMap(mapData, userLat, userLon);
+  });
+</script>
+{% endblock %}
+

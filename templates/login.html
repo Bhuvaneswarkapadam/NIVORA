@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In | NIVORA – Find Your Place. Feel at Home.{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NIVORA Logo" style="height: 38px; margin: 0 auto 1rem;">
+      <h3 class="auth-title">Welcome Back</h3>
+      <p class="auth-subtitle">Sign in to access your saved PGs, enquiries and profile.</p>
+    </div>
+
+    <div class="auth-body">
+      <!-- Demo credentials helper box -->
+      <div class="p-3 mb-4 rounded border" style="background: rgba(212, 175, 55, 0.08); border-color: rgba(212, 175, 55, 0.3) !important;">
+        <div class="small fw-bold text-gold mb-1"><i class="fa-solid fa-key me-1"></i> Quick Test Credentials:</div>
+        <div class="small text-white font-monospace">
+          <strong>Admin:</strong> admin@nivora.com / Admin@123<br>
+          <strong>User:</strong> user@example.com / User@123
+        </div>
+      </div>
+
+      <form method="POST" action="{{ url_for('login', next=request.args.get('next')) }}">
+        {{ form.hidden_tag() }}
+
+        <div class="auth-form-group">
+          <label class="auth-label">{{ form.email.label.text }}</label>
+          {{ form.email(class="auth-input", placeholder="Enter your email address", autofocus=true) }}
+          {% for error in form.email.errors %}
+            <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="auth-form-group">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label class="auth-label mb-0">{{ form.password.label.text }}</label>
+            <a href="#" class="small text-gold text-decoration-none">Forgot password?</a>
+          </div>
+          {{ form.password(class="auth-input", placeholder="Enter your password") }}
+          {% for error in form.password.errors %}
+            <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="form-check mb-4">
+          {{ form.remember(class="form-check-input", id="rememberCheck") }}
+          <label class="form-check-label text-muted small" for="rememberCheck">
+            {{ form.remember.label.text }}
+          </label>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-gold py-2">
+            <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Sign In to NIVORA
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-footer-text">
+        Don't have an account yet? <a href="{{ url_for('register') }}">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

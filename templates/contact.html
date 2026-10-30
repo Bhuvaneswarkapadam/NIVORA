@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us & Concierge | NIVORA{% endblock %}
+
+{% block content %}
+<section class="py-5" style="background: #0E0E0E; color: #FFFFFF; border-bottom: 1px solid rgba(212, 175, 55, 0.2);">
+  <div class="container py-3 text-center">
+    <span class="badge bg-dark text-gold border border-gold mb-2">CONCIERGE & SUPPORT</span>
+    <h1 class="fw-bold display-5 mb-2">Get in Touch with NIVORA</h1>
+    <p class="text-muted max-w-600 mx-auto">Have questions about listings, host partnerships, or custom corporate accommodations? Our Bangalore concierge team is ready to assist.</p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-5">
+      <div class="p-4 bg-white border rounded shadow-sm h-100">
+        <h4 class="fw-bold mb-4">Contact Information</h4>
+
+        <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="feature-icon-wrapper mb-0" style="width: 46px; height: 46px; font-size: 1.2rem;">
+            <i class="fa-solid fa-location-dot"></i>
+          </div>
+          <div>
+            <div class="fw-bold">Bangalore Office</div>
+            <div class="text-muted small">
+              #42, 100 Feet Road, HAL 2nd Stage,<br>
+              Indiranagar, Bangalore, Karnataka 560038
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="feature-icon-wrapper mb-0" style="width: 46px; height: 46px; font-size: 1.2rem;">
+            <i class="fa-solid fa-phone"></i>
+          </div>
+          <div>
+            <div class="fw-bold">Helpline & WhatsApp</div>
+            <div class="text-muted small">+91 (080) 4567-8900 / +91 98450 12345</div>
+            <div class="text-muted small">Mon - Sat: 9:00 AM - 8:00 PM IST</div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="feature-icon-wrapper mb-0" style="width: 46px; height: 46px; font-size: 1.2rem;">
+            <i class="fa-solid fa-envelope"></i>
+          </div>
+          <div>
+            <div class="fw-bold">Email Inquiries</div>
+            <div class="text-muted small">concierge@nivora.in</div>
+            <div class="text-muted small">partners@nivora.in (for PG hosts)</div>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <h6 class="fw-bold mb-2">Are you a PG Accommodation Owner?</h6>
+        <p class="text-muted small mb-3">
+          List your verified PG on NIVORA to connect directly with working tech professionals and students without brokerage fees.
+        </p>
+        <a href="{{ url_for('login') }}" class="btn btn-outline-dark btn-sm w-100">
+          <i class="fa-solid fa-house-chimney-medical me-1"></i> Partner With NIVORA
+        </a>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="p-4 p-md-5 bg-white border rounded shadow-sm">
+        <h4 class="fw-bold mb-2">Send Us a Message</h4>
+        <p class="text-muted small mb-4">Fill out the form below and a representative will reply within 24 business hours.</p>
+
+        <form method="POST" action="{{ url_for('contact') }}">
+          {{ form.hidden_tag() }}
+
+          <div class="row g-3">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold small">{{ form.name.label.text }}</label>
+              {{ form.name(class="form-control", placeholder="Your full name") }}
+              {% for error in form.name.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold small">{{ form.email.label.text }}</label>
+              {{ form.email(class="form-control", placeholder="name@domain.com") }}
+              {% for error in form.email.errors %}
+                <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">{{ form.phone.label.text }} (Optional)</label>
+            {{ form.phone(class="form-control", placeholder="+91 98765 43210") }}
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold small">{{ form.message.label.text }}</label>
+            {{ form.message(class="form-control", rows=5, placeholder="Tell us how we can help you...") }}
+            {% for error in form.message.errors %}
+              <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="text-end">
+            {{ form.submit(class="btn btn-gold px-4 py-2") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

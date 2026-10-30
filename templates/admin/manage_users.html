@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Registered Users | NIVORA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header-bar">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div>
+      <h5 class="mb-0 fw-bold text-white"><i class="fa-solid fa-users text-gold me-2"></i>User Management</h5>
+      <div class="small text-muted">Total Registered Accounts: {{ users|length }}</div>
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Dashboard</a>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="admin-table-card">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Role</th>
+            <th>Registered Date</th>
+            <th>Enquiries Sent</th>
+            <th>Saved PGs</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr>
+              <td class="font-monospace text-muted small">#{{ u.id }}</td>
+              <td>
+                <div class="fw-bold">{{ u.name }}</div>
+              </td>
+              <td><span class="font-monospace small">{{ u.email }}</span></td>
+              <td><span class="font-monospace small">{{ u.phone }}</span></td>
+              <td>
+                <span class="badge {{ 'bg-dark text-gold border border-gold' if u.is_admin else 'bg-secondary' }}">
+                  {{ u.role|upper }}
+                </span>
+              </td>
+              <td class="small text-muted">{{ u.created_at.strftime('%d %b, %Y') }}</td>
+              <td class="font-monospace">{{ u.enquiries.count() }}</td>
+              <td class="font-monospace">{{ u.favourites.count() }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

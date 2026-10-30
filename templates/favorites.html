@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}My Saved Accommodations | NIVORA{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold mb-1"><i class="fa-solid fa-heart text-danger me-2"></i>My Saved Accommodations</h2>
+      <p class="text-muted mb-0">Review and compare your shortlisted Bangalore PGs.</p>
+    </div>
+    <a href="{{ url_for('search') }}" class="btn btn-gold btn-sm">
+      <i class="fa-solid fa-plus me-1"></i> Explore More PGs
+    </a>
+  </div>
+
+  {% if pgs %}
+    <div class="row g-4">
+      {% for pg in pgs %}
+        <div class="col-lg-4 col-md-6 pg-card-col">
+          <div class="pg-card">
+            <div class="pg-card-img-wrapper">
+              <img src="{{ url_for('static', filename=pg.primary_photo) }}" alt="{{ pg.name }}" class="pg-card-img" onerror="this.src='{{ url_for('static', filename='images/pg/placeholder.svg') }}';">
+              <span class="badge-gender {{ pg.gender_category.lower() }}">{{ pg.gender_category }}</span>
+              <button type="button" class="fav-btn active" data-pg-id="{{ pg.id }}" title="Remove from Favourites">
+                <i class="fa-solid fa-heart"></i>
+              </button>
+            </div>
+            <div class="pg-card-body">
+              <div class="pg-card-area"><i class="fa-solid fa-location-dot"></i> {{ pg.area }}</div>
+              <h5 class="pg-card-title"><a href="{{ url_for('pg_details', pg_id=pg.id) }}">{{ pg.name }}</a></h5>
+              <p class="pg-card-address">{{ pg.address }}</p>
+
+              <div class="pg-amenities-row mb-3">
+                {% if pg.wifi_available %}<span class="amenity-chip"><i class="fa-solid fa-wifi"></i> Wi-Fi</span>{% endif %}
+                {% if pg.food_available %}<span class="amenity-chip"><i class="fa-solid fa-utensils"></i> Food</span>{% endif %}
+                {% if pg.ac_available %}<span class="amenity-chip"><i class="fa-solid fa-snowflake"></i> AC</span>{% endif %}
+              </div>
+
+              <div class="pg-card-footer">
+                <div>
+                  <div class="pg-rent-price">{{ pg.monthly_rent | currency_inr }} <span class="pg-rent-period">/ mo</span></div>
+                  <div class="small text-muted">{{ pg.room_type }}</div>
+                </div>
+                <a href="{{ url_for('pg_details', pg_id=pg.id) }}" class="btn btn-gold btn-sm">
+                  View Details
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="text-center py-5 bg-white border rounded p-4">
+      <i class="fa-regular fa-heart display-4 text-muted mb-3"></i>
+      <h4 class="fw-bold">No Saved Accommodations Yet</h4>
+      <p class="text-muted max-w-500 mx-auto">
+        When browsing accommodations, click the heart icon on any card to save it to your wishlist for fast access and comparison.
+      </p>
+      <a href="{{ url_for('search') }}" class="btn btn-gold mt-2">
+        <i class="fa-solid fa-compass me-1"></i> Browse Accommodations
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
+

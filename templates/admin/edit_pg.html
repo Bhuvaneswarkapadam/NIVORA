@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Edit PG Accommodation | NIVORA Admin{% endblock %}
+
+{% block content %}
+<div class="admin-header-bar">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div>
+      <h5 class="mb-0 fw-bold text-white"><i class="fa-solid fa-pen-to-square text-gold me-2"></i>Edit Accommodation: {{ pg.name }}</h5>
+      <div class="small text-muted">ID: #{{ pg.id }} • {{ pg.area }}, Bangalore</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('manage_pgs') }}" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> Back</a>
+      <a href="{{ url_for('pg_details', pg_id=pg.id) }}" target="_blank" class="btn btn-gold btn-sm"><i class="fa-solid fa-eye me-1"></i> View Live</a>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="p-4 p-md-5 bg-white border rounded shadow-sm">
+        <form method="POST" action="{{ url_for('edit_pg', pg_id=pg.id) }}" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-4">
+            <i class="fa-solid fa-hotel text-gold me-2"></i>1. Accommodation Details
+          </h5>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold small">{{ form.name.label.text }} *</label>
+            {{ form.name(class="form-control") }}
+            {% for err in form.name.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold small">{{ form.description.label.text }} *</label>
+            {{ form.description(class="form-control", rows=4) }}
+            {% for err in form.description.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-8">
+              <label class="form-label fw-bold small">{{ form.address.label.text }} *</label>
+              {{ form.address(class="form-control") }}
+              {% for err in form.address.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">{{ form.area.label.text }} *</label>
+              {{ form.area(class="form-select", id="area") }}
+              {% for err in form.area.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4 p-3 bg-light rounded border">
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Latitude</label>
+              {{ form.latitude(class="form-control form-control-sm font-monospace", id="latitude") }}
+              {% for err in form.latitude.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Longitude</label>
+              {{ form.longitude(class="form-control form-control-sm font-monospace", id="longitude") }}
+              {% for err in form.longitude.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+          </div>
+
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-4">
+            <i class="fa-solid fa-indian-rupee-sign text-gold me-2"></i>2. Pricing & Category
+          </h5>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label fw-bold small">{{ form.monthly_rent.label.text }} *</label>
+              {{ form.monthly_rent(class="form-control") }}
+              {% for err in form.monthly_rent.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold small">{{ form.security_deposit.label.text }}</label>
+              {{ form.security_deposit(class="form-control") }}
+              {% for err in form.security_deposit.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">{{ form.gender_category.label.text }} *</label>
+              {{ form.gender_category(class="form-select") }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">{{ form.room_type.label.text }} *</label>
+              {{ form.room_type(class="form-select") }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">{{ form.availability.label.text }}</label>
+              {{ form.availability(class="form-select") }}
+            </div>
+          </div>
+
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-4">
+            <i class="fa-solid fa-bell-concierge text-gold me-2"></i>3. Amenities & Facilities Checklist
+          </h5>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.wifi_available(class="form-check-input", id="wifi_chk") }}
+                <label class="form-check-label small" for="wifi_chk">{{ form.wifi_available.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.food_available(class="form-check-input", id="food_chk") }}
+                <label class="form-check-label small" for="food_chk">{{ form.food_available.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.ac_available(class="form-check-input", id="ac_chk") }}
+                <label class="form-check-label small" for="ac_chk">{{ form.ac_available.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.laundry_available(class="form-check-input", id="laundry_chk") }}
+                <label class="form-check-label small" for="laundry_chk">{{ form.laundry_available.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.parking_available(class="form-check-input", id="parking_chk") }}
+                <label class="form-check-label small" for="parking_chk">{{ form.parking_available.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.cctv_available(class="form-check-input", id="cctv_chk") }}
+                <label class="form-check-label small" for="cctv_chk">{{ form.cctv_available.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.housekeeping_available(class="form-check-input", id="hk_chk") }}
+                <label class="form-check-label small" for="hk_chk">{{ form.housekeeping_available.label.text }}</label>
+              </div>
+            </div>
+            <div class="col-md-3 col-6">
+              <div class="form-check">
+                {{ form.attached_washroom(class="form-check-input", id="wash_chk") }}
+                <label class="form-check-label small" for="wash_chk">{{ form.attached_washroom.label.text }}</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold small">{{ form.rules.label.text }}</label>
+            {{ form.rules(class="form-control", rows=2) }}
+          </div>
+
+          <!-- Existing Photos -->
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-3">
+            <i class="fa-solid fa-camera text-gold me-2"></i>4. Photos & Uploads
+          </h5>
+
+          {% if pg.photos %}
+            <div class="row g-2 mb-3">
+              <div class="col-12 small text-muted mb-1">Existing Photos:</div>
+              {% for p in pg.photos %}
+                <div class="col-3 col-md-2">
+                  <div class="border rounded p-1 text-center bg-light">
+                    <img src="{{ url_for('static', filename=p.image_path) }}" alt="Photo" class="rounded" style="height: 60px; width: 100%; object-fit: cover;">
+                    <div style="font-size: 10px;" class="mt-1 text-muted">{{ 'Primary' if p.is_primary else 'Gallery' }}</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="mb-4">
+            <label class="form-label fw-bold small">Upload Additional Photos</label>
+            {{ form.photos(class="form-control", multiple=true) }}
+            <div class="form-text small">Select more images to add to the accommodation's gallery.</div>
+          </div>
+
+          <h5 class="fw-bold text-dark border-bottom pb-2 mb-4">
+            <i class="fa-solid fa-user-shield text-gold me-2"></i>5. Owner Information & Verification
+          </h5>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">{{ form.owner_name.label.text }} *</label>
+              {{ form.owner_name(class="form-control") }}
+              {% for err in form.owner_name.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">{{ form.owner_phone.label.text }} *</label>
+              {{ form.owner_phone(class="form-control") }}
+              {% for err in form.owner_phone.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold small">{{ form.owner_email.label.text }}</label>
+              {{ form.owner_email(class="form-control") }}
+              {% for err in form.owner_email.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+            </div>
+          </div>
+
+          <div class="p-3 mb-4 rounded border bg-light">
+            <div class="form-check">
+              {{ form.verified(class="form-check-input", id="verified_chk") }}
+              <label class="form-check-label fw-bold text-dark small" for="verified_chk">
+                <i class="fa-solid fa-circle-check text-gold me-1"></i> Verify this listing as authentic and physically checked
+              </label>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <a href="{{ url_for('manage_pgs') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-gold px-4 py-2">
+              <i class="fa-solid fa-floppy-disk me-1"></i> Update Accommodation
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

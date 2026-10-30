@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Control Center | NIVORA{% endblock %}
+
+{% block content %}
+<!-- Admin Top Subheader -->
+<div class="admin-header-bar">
+  <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <span class="admin-badge"><i class="fa-solid fa-shield"></i> Master Admin</span>
+      <h5 class="mb-0 fw-bold text-white">NIVORA Control Center</h5>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="{{ url_for('add_pg') }}" class="btn btn-gold btn-sm">
+        <i class="fa-solid fa-plus-circle me-1"></i> Add New PG
+      </a>
+      <a href="{{ url_for('manage_pgs') }}" class="btn btn-dark-luxury btn-sm">
+        <i class="fa-solid fa-list-check me-1"></i> Manage Listings
+      </a>
+      <a href="{{ url_for('manage_enquiries') }}" class="btn btn-dark-luxury btn-sm position-relative">
+        <i class="fa-solid fa-envelope me-1"></i> Enquiries
+        {% if pending_enquiries > 0 %}
+          <span class="badge bg-danger ms-1">{{ pending_enquiries }}</span>
+        {% endif %}
+      </a>
+      <a href="{{ url_for('manage_users') }}" class="btn btn-dark-luxury btn-sm">
+        <i class="fa-solid fa-users me-1"></i> Users
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <!-- Key Metric Statistics Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-xl-3 col-sm-6">
+      <div class="admin-stat-card d-flex justify-content-between align-items-center">
+        <div>
+          <div class="admin-stat-number">{{ total_pgs }}</div>
+          <div class="admin-stat-label">Total PG Listings</div>
+        </div>
+        <div class="admin-stat-icon">
+          <i class="fa-solid fa-building-user"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+      <div class="admin-stat-card d-flex justify-content-between align-items-center">
+        <div>
+          <div class="admin-stat-number text-gold">{{ verified_pgs }}</div>
+          <div class="admin-stat-label">Verified Listings</div>
+        </div>
+        <div class="admin-stat-icon" style="background: #E8F7F5; color: #2A9D8F;">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+      <div class="admin-stat-card d-flex justify-content-between align-items-center">
+        <div>
+          <div class="admin-stat-number">{{ total_users }}</div>
+          <div class="admin-stat-label">Registered Users</div>
+        </div>
+        <div class="admin-stat-icon" style="background: #EBF3FF; color: #0D6EFD;">
+          <i class="fa-solid fa-users"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-sm-6">
+      <div class="admin-stat-card d-flex justify-content-between align-items-center">
+        <div>
+          <div class="admin-stat-number {{ 'text-danger' if pending_enquiries > 0 else 'text-dark' }}">{{ pending_enquiries }}</div>
+          <div class="admin-stat-label">Pending Enquiries</div>
+        </div>
+        <div class="admin-stat-icon" style="background: #FFF3CD; color: #856404;">
+          <i class="fa-solid fa-bell"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- RECENT ENQUIRIES TABLE -->
+    <div class="col-lg-7">
+      <div class="admin-table-card">
+        <div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0"><i class="fa-solid fa-envelope-open text-gold me-2"></i>Recent Tenant Enquiries</h6>
+          <a href="{{ url_for('manage_enquiries') }}" class="btn btn-outline-dark btn-sm py-1 px-2 small">View All</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>PG / Area</th>
+                <th>Status</th>
+                <th>Update</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for enq in recent_enquiries %}
+                <tr>
+                  <td>
+                    <div class="fw-bold">{{ enq.name }}</div>
+                    <div class="small text-muted font-monospace">{{ enq.phone }}</div>
+                  </td>
+                  <td>
+                    <div class="fw-semibold text-truncate" style="max-width: 170px;">{{ enq.pg.name }}</div>
+                    <div class="small text-muted">{{ enq.pg.area }}</div>
+                  </td>
+                  <td>
+                    <span class="status-badge status-{{ enq.status.replace(' ', '_') }}">{{ enq.status }}</span>
+                  </td>
+                  <td>
+                    <form action="{{ url_for('update_enquiry_status', enquiry_id=enq.id) }}" method="POST" class="d-inline">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <select name="status" class="form-select form-select-sm" onchange="this.form.submit()" style="width: 110px; font-size: 11px;">
+                        <option value="Pending" {{ 'selected' if enq.status == 'Pending' }}>Pending</option>
+                        <option value="In Review" {{ 'selected' if enq.status == 'In Review' }}>In Review</option>
+                        <option value="Contacted" {{ 'selected' if enq.status == 'Contacted' }}>Contacted</option>
+                        <option value="Resolved" {{ 'selected' if enq.status == 'Resolved' }}>Resolved</option>
+                      </select>
+                    </form>
+                  </td>
+                </tr>
+              {% else %}
+                <tr>
+                  <td colspan="4" class="text-center py-4 text-muted">No enquiries recorded yet.</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT PG LISTINGS TABLE -->
+    <div class="col-lg-5">
+      <div class="admin-table-card">
+        <div class="p-3 bg-white border-bottom d-flex justify-content-between align-items-center">
+          <h6 class="fw-bold mb-0"><i class="fa-solid fa-hotel text-gold me-2"></i>Active PG Inventory</h6>
+          <a href="{{ url_for('manage_pgs') }}" class="btn btn-outline-dark btn-sm py-1 px-2 small">All Listings</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Rent</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for pg in recent_pgs %}
+                <tr>
+                  <td>
+                    <div class="fw-bold">{{ pg.name }}</div>
+                    <div class="small text-muted">{{ pg.area }} • {{ pg.room_type }}</div>
+                  </td>
+                  <td class="font-monospace fw-semibold">{{ pg.monthly_rent | currency_inr }}</td>
+                  <td>
+                    {% if pg.verified %}
+                      <span class="badge bg-success small"><i class="fa-solid fa-check"></i> Verified</span>
+                    {% else %}
+                      <span class="badge bg-secondary small">Unverified</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="d-flex gap-1">
+                      <a href="{{ url_for('edit_pg', pg_id=pg.id) }}" class="admin-action-btn admin-action-edit" title="Edit">
+                        <i class="fa-solid fa-pen"></i>
+                      </a>
+                      <a href="{{ url_for('pg_details', pg_id=pg.id) }}" class="admin-action-btn admin-action-view" target="_blank" title="View">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

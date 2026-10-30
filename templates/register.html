@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account | NIVORA – Find Your Place. Feel at Home.{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="NIVORA Logo"
+        style="height: 38px; margin: 0 auto 1rem;">
+      <h3 class="auth-title">Join NIVORA</h3>
+      <p class="auth-subtitle">Discover transparent, verified PG accommodations across Bangalore.</p>
+    </div>
+
+    <div class="auth-body">
+      <form method="POST" action="{{ url_for('register') }}" id="registrationForm">
+        {{ form.hidden_tag() }}
+
+        <div class="auth-form-group">
+          <label class="auth-label">{{ form.name.label.text }}</label>
+          {{ form.name(class="auth-input", placeholder="Enter your full legal name", autofocus=true) }}
+          {% for error in form.name.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="auth-form-group">
+          <label class="auth-label">{{ form.email.label.text }}</label>
+          {{ form.email(class="auth-input", placeholder="name@domain.com") }}
+          {% for error in form.email.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="auth-form-group">
+          <label class="auth-label">{{ form.phone.label.text }}</label>
+          {{ form.phone(class="auth-input", placeholder="+91 98765 43210") }}
+          {% for error in form.phone.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="row g-2">
+          <div class="col-md-6 auth-form-group">
+            <label class="auth-label">{{ form.password.label.text }}</label>
+            {{ form.password(class="auth-input", id="password", placeholder="At least 6 chars") }}
+            {% for error in form.password.errors %}
+            <div class="text-danger small mt-1">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="col-md-6 auth-form-group">
+            <label class="auth-label">{{ form.confirm_password.label.text }}</label>
+            {{ form.confirm_password(class="auth-input", id="confirm_password", placeholder="Repeat password") }}
+            {% for error in form.confirm_password.errors %}
+            <div class="text-danger small mt-1">{{ error }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="termsCheck" required checked>
+          <label class="form-check-label text-muted small" for="termsCheck">
+            I agree to NIVORA's <a href="#" class="text-gold">Terms of Service</a> & <a href="#"
+              class="text-gold">Privacy Policy</a>.
+          </label>
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-gold py-2">
+            <i class="fa-solid fa-user-plus me-1"></i> Register Account
+          </button>
+        </div>
+      </form>
+
+      <div class="auth-footer-text">
+        Already have a NIVORA account? <a href="{{ url_for('login') }}">Sign In</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
